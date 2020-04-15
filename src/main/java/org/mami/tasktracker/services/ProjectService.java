@@ -5,6 +5,7 @@ import org.mami.tasktracker.exceptions.CustomFieldValidationException;
 import org.mami.tasktracker.repositories.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,8 +20,20 @@ public class ProjectService {
     public Project saveOrUpdate(Project projectToSave) {
         try {
             return this.projectRepository.save(projectToSave);
-        } catch (DataAccessException e) {
-            throw new CustomFieldValidationException("projectCode", String.format("project code %s already exists", projectToSave.getProjectCode()));
+        } catch (DataIntegrityViolationException e) {
+            if (projectRepository.findByProjectCode(projectToSave.getProjectCode()).isPresent()) {
+                throw new CustomFieldValidationException(
+                        "projectCode",
+                        String.format("project code %s already exists", projectToSave.getProjectCode()));
+            } else {
+                throw (e);
+            }
         }
+    }
+
+    public Project findProjectByCode(String projectCode) {
+        return this.projectRepository.findByProjectCode(projectCode)
+                .orElseThrow(() -> new CustomFieldValidationException("projectCode",
+                        String.format("Could not find a Project with project code: <%s>", projectCode)));
     }
 }
