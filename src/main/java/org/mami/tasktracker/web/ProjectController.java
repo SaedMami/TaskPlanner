@@ -2,6 +2,7 @@ package org.mami.tasktracker.web;
 
 import org.mami.tasktracker.domain.Project;
 import org.mami.tasktracker.services.ProjectService;
+import org.mami.tasktracker.services.ValidationReportingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,22 +22,19 @@ import java.util.stream.Collectors;
 public class ProjectController {
 
     private final ProjectService projectService;
+    private final ValidationReportingService validationReportingService;
 
     @Autowired
-    public ProjectController(ProjectService projectService) {
+    public ProjectController(ProjectService projectService, ValidationReportingService validationReportingService) {
         this.projectService = projectService;
+        this.validationReportingService = validationReportingService;
     }
 
     @PostMapping("")
     public ResponseEntity<?> createNewProject(@Valid @RequestBody Project project, BindingResult result) {
 
         if (result.hasErrors()) {
-
-             Map<String, String> errors = result.getFieldErrors().stream()
-                     .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
-
-
-            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+            return validationReportingService.reportValidationErrors(result);
         }
 
         Project createdProject = this.projectService.saveOrUpdate(project);
