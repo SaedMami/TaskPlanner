@@ -50,4 +50,11 @@ public class ProjectController {
         return this.projectService.findAllProjects();
     }
 
+    @DeleteMapping("/{projectCode}")
+    public ResponseEntity<?> deleteProjectByCode(@PathVariable String projectCode) {
+        this.projectService.deleteProjectByCode(projectCode);
+
+        return new ResponseEntity<>(String.format("Project with code: %s was deleted", projectCode), HttpStatus.OK);
+    }
+
 }

@@ -8,6 +8,8 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class ProjectService {
     private final ProjectRepository projectRepository;
@@ -39,5 +41,10 @@ public class ProjectService {
 
     public Iterable<Project> findAllProjects() {
         return this.projectRepository.findAll();
+    }
+
+    public void deleteProjectByCode(String projectCode) {
+        Project project = this.findProjectByCode(projectCode);
+        this.projectRepository.delete(project);
     }
 }
