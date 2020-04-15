@@ -8,6 +8,7 @@ import java.util.Optional;
 
 @Repository
 public interface ProjectRepository extends CrudRepository<Project, Long> {
+
     Optional<Project> findByProjectCode(String projectCode);
 
 }

@@ -36,4 +36,8 @@ public class ProjectService {
                 .orElseThrow(() -> new CustomFieldValidationException("projectCode",
                         String.format("Could not find a Project with project code: <%s>", projectCode)));
     }
+
+    public Iterable<Project> findAllProjects() {
+        return this.projectRepository.findAll();
+    }
 }

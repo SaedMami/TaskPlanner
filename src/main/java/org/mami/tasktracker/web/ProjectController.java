@@ -44,4 +44,10 @@ public class ProjectController {
 
         return new ResponseEntity<>(foundProject, HttpStatus.OK);
     }
+
+    @GetMapping("/all")
+    public Iterable<Project> getAllProjects() {
+        return this.projectService.findAllProjects();
+    }
+
 }
