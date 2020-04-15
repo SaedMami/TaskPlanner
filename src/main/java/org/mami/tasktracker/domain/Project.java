@@ -24,28 +24,29 @@ public class Project {
     @NotBlank(message = "project description is required")
     private String description;
 
-    @JsonFormat(pattern = "yyyy-mm-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date startDate;
 
-    @JsonFormat(pattern = "yyyy-mm-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date endDate;
 
-    @JsonFormat(pattern = "yyyy-mm-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date createdAt;
 
-    @JsonFormat(pattern = "yyyy-mm-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date updatedAt;
 
     public Project() {
     }
 
     @PrePersist
-    protected void OnCreate() {
+    public void OnCreate() {
         this.createdAt = new Date();
+        this.updatedAt = new Date();
     }
 
     @PreUpdate
-    void onUpdate() {
+    public void onUpdate() {
         this.updatedAt = new Date();
     }
 
