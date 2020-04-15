@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 @Service
 public class ValidationReportingService {
     public ResponseEntity<Map<String, String>> reportValidationErrors(BindingResult result) {
+
             Map<String, String> errors = result.getFieldErrors().stream()
                     .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
 

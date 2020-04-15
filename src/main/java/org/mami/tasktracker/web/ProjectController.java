@@ -31,7 +31,7 @@ public class ProjectController {
     }
 
     @PostMapping("")
-    public ResponseEntity<?> createNewProject(@Valid @RequestBody Project project, BindingResult result) {
+    public ResponseEntity<?> createNewProject(@RequestBody @Valid Project project, BindingResult result) {
 
         if (result.hasErrors()) {
             return validationReportingService.reportValidationErrors(result);
