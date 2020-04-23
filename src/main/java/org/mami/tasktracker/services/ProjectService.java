@@ -4,11 +4,8 @@ import org.mami.tasktracker.domain.Project;
 import org.mami.tasktracker.exceptions.CustomFieldValidationException;
 import org.mami.tasktracker.repositories.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class ProjectService {

@@ -7,15 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/project")
+@CrossOrigin
 public class ProjectController {
 
     private final ProjectService projectService;
@@ -29,7 +27,6 @@ public class ProjectController {
 
     @PostMapping("")
     public ResponseEntity<?> createNewProject(@RequestBody @Valid Project project, BindingResult result) {
-
         if (result.hasErrors()) {
             return validationReportingService.reportValidationErrors(result);
         }
@@ -45,7 +42,7 @@ public class ProjectController {
         return new ResponseEntity<>(foundProject, HttpStatus.OK);
     }
 
-    @GetMapping("/all")
+    @GetMapping("")
     public Iterable<Project> getAllProjects() {
         return this.projectService.findAllProjects();
     }

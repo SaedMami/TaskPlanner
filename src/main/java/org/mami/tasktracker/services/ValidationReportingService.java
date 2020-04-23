@@ -14,7 +14,7 @@ public class ValidationReportingService {
     public ResponseEntity<Map<String, String>> reportValidationErrors(BindingResult result) {
 
             Map<String, String> errors = result.getFieldErrors().stream()
-                    .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
+                    .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage, (k1, k2) -> k1));
 
             return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
