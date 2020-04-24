@@ -1,11 +1,13 @@
 package org.mami.tasktracker.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
 @Entity
-public class ProjectTask {
+public class Task {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,7 +35,11 @@ public class ProjectTask {
     @Column(updatable = false)
     private String projectCode;
 
-    public ProjectTask() {
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH)
+    @JsonIgnore
+    private Backlog backlog;
+
+    public Task() {
     }
 
     @Override
@@ -130,6 +136,14 @@ public class ProjectTask {
 
     public void setProjectCode(String projectCode) {
         this.projectCode = projectCode;
+    }
+
+    public Backlog getBacklog() {
+        return backlog;
+    }
+
+    public void setBacklog(Backlog backlog) {
+        this.backlog = backlog;
     }
 
     @PrePersist
