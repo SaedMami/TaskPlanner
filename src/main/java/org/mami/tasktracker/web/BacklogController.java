@@ -26,7 +26,7 @@ public class BacklogController {
     }
 
     @PostMapping("/{projectCode}")
-    public ResponseEntity<?> addTaskToBacklog(@Valid @RequestBody Task task, @PathVariable String projectCode, BindingResult result) {
+    public ResponseEntity<?> addTaskToBacklog(@Valid @RequestBody Task task, BindingResult result, @PathVariable String projectCode) {
         if (result.hasErrors()) {
             return validationReportingService.reportValidationErrors(result);
         }
@@ -39,5 +39,10 @@ public class BacklogController {
     @GetMapping("/{projectCode}")
     public ResponseEntity<?> getProjectBacklog(@PathVariable String projectCode) {
         return new ResponseEntity<>(this.backlogService.getProjectBacklog(projectCode), HttpStatus.OK);
+    }
+
+    @GetMapping("/{projectCode}/{taskSequence}")
+    public ResponseEntity<?> getProjectTask(@PathVariable String projectCode, @PathVariable String taskSequence) {
+        return new ResponseEntity<>(this.backlogService.getTaskBySequence(projectCode, taskSequence), HttpStatus.OK);
     }
 }
