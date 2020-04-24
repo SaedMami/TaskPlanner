@@ -35,4 +35,9 @@ public class BacklogController {
 
         return new ResponseEntity<>(createdTask, HttpStatus.CREATED);
     }
+
+    @GetMapping("/{projectCode}")
+    public ResponseEntity<?> getProjectBacklog(@PathVariable String projectCode) {
+        return new ResponseEntity<>(this.backlogService.getProjectBacklog(projectCode), HttpStatus.OK);
+    }
 }

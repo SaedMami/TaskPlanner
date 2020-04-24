@@ -30,4 +30,8 @@ public class BacklogService {
 
         return null;
     }
+
+    public Backlog getProjectBacklog(String projectCode) {
+        return this.backlogRepository.findByProjectCode(projectCode).get();
+    }
 }

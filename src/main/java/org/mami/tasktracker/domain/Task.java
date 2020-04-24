@@ -16,7 +16,7 @@ public class Task {
     @Column(updatable = false)
     private String projectSequence;
 
-    @NotBlank(message = "project summary cannot be empty")
+    @NotBlank(message = "task summary cannot be empty")
     private String summary;
 
     private String acceptanceCriteria;
