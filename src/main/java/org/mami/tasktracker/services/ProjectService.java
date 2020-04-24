@@ -1,10 +1,10 @@
 package org.mami.tasktracker.services;
 
+import org.mami.tasktracker.domain.Backlog;
 import org.mami.tasktracker.domain.Project;
 import org.mami.tasktracker.exceptions.CustomFieldValidationException;
 import org.mami.tasktracker.repositories.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,17 +17,29 @@ public class ProjectService {
     }
 
     public Project saveOrUpdate(Project projectToSave) {
-        try {
-            return this.projectRepository.save(projectToSave);
-        } catch (DataIntegrityViolationException e) {
-            if (projectRepository.findByProjectCode(projectToSave.getProjectCode()).isPresent()) {
-                throw new CustomFieldValidationException(
-                        "projectCode",
-                        String.format("project code %s already exists", projectToSave.getProjectCode()));
+            if (projectToSave.getId() == null) {
+                // new project
+                if (projectRepository.findByProjectCode(projectToSave.getProjectCode()).isPresent()) {
+                    throw new CustomFieldValidationException(
+                            "projectCode",
+                            String.format("project code %s already exists", projectToSave.getProjectCode()));
+                }
+
+                Backlog backlog = new Backlog();
+                projectToSave.setBacklog(backlog);
+
+                return this.projectRepository.save(projectToSave);
+
             } else {
-                throw (e);
+                // update the project
+                Project toBeUpdated = this.projectRepository.findByProjectCode(projectToSave.getProjectCode()).get();
+                toBeUpdated.setName(projectToSave.getName());
+                toBeUpdated.setDescription(projectToSave.getDescription());
+                toBeUpdated.setStartDate(projectToSave.getStartDate());
+                toBeUpdated.setEndDate(projectToSave.getEndDate());
+
+                return this.projectRepository.save(toBeUpdated);
             }
-        }
     }
 
     public Project findProjectByCode(String projectCode) {
