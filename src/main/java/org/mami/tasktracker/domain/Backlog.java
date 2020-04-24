@@ -63,7 +63,12 @@ public class Backlog {
         return tasks;
     }
 
-    public void setTasks(List<Task> tasks) {
-        this.tasks = tasks;
+    public Task addTask(Task task) {
+        task.setBacklog(this);
+        task.setProjectSequence(String.format("%s_%d", this.projectCode, this.PTSequence++));
+        task.setProjectCode(this.projectCode);
+
+        this.tasks.add(task);
+        return task;
     }
 }

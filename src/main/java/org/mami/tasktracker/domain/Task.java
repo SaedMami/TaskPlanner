@@ -21,9 +21,9 @@ public class Task {
 
     private String acceptanceCriteria;
 
-    private String status;
+    private String status = "TODO";
 
-    private Integer priority;
+    private Integer priority = 3; // low priority by default
 
     private Date dueDate;
 
