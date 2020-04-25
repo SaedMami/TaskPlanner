@@ -1,5 +1,6 @@
 package org.mami.tasktracker.web;
 
+import org.mami.tasktracker.domain.Backlog;
 import org.mami.tasktracker.domain.Task;
 import org.mami.tasktracker.services.BacklogService;
 import org.mami.tasktracker.services.ValidationReportingService;
@@ -36,6 +37,20 @@ public class BacklogController {
         return new ResponseEntity<>(createdTask, HttpStatus.CREATED);
     }
 
+    @PatchMapping("/{projectCode}/{taskSequence}")
+    public ResponseEntity<?>  updateTask(
+            @Valid @RequestBody Task task,
+            BindingResult result,
+            @PathVariable String projectCode,
+            @PathVariable String taskSequence) {
+
+        if (result.hasErrors()) {
+            return validationReportingService.reportValidationErrors(result);
+        }
+
+        return new ResponseEntity<>(this.backlogService.updateTask(projectCode, task), HttpStatus.OK);
+    }
+
     @GetMapping("/{projectCode}")
     public ResponseEntity<?> getProjectBacklog(@PathVariable String projectCode) {
         return new ResponseEntity<>(this.backlogService.getProjectBacklog(projectCode), HttpStatus.OK);
@@ -44,5 +59,11 @@ public class BacklogController {
     @GetMapping("/{projectCode}/{taskSequence}")
     public ResponseEntity<?> getProjectTask(@PathVariable String projectCode, @PathVariable String taskSequence) {
         return new ResponseEntity<>(this.backlogService.getTaskBySequence(projectCode, taskSequence), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{projectCode}/{taskSequence}")
+    public ResponseEntity<?> deleteProjectByCode(@PathVariable String projectCode, @PathVariable String taskSequence) {
+        this.backlogService.deleteTask(projectCode, taskSequence);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

@@ -6,11 +6,13 @@ import org.mami.tasktracker.exceptions.CustomFieldValidationException;
 import org.mami.tasktracker.repositories.BacklogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 
 @Service
+@Transactional
 public class BacklogService {
 
     private final BacklogRepository backlogRepository;
@@ -50,5 +52,27 @@ public class BacklogService {
                 .orElseThrow(() -> new CustomFieldValidationException(
                         "taskSequence",
                         String.format("could not find task <%s> within the project", sequence)));
+    }
+
+    public Task updateTask(final String projectCode, final Task newTask) {
+
+        Backlog backlog = this.getProjectBacklog(projectCode);
+
+        Task updatedTask = backlog.updateTask(newTask);
+        this.backlogRepository.save(backlog);
+
+        return updatedTask;
+    }
+
+    public void deleteTask(final String projectCode, final String taskSequence) {
+        Backlog backlog = this.backlogRepository.findByProjectCode(projectCode)
+                .orElseThrow(() -> new CustomFieldValidationException(
+                        "projectCode",
+                        String.format("project with code {%s} does not exist", projectCode)));
+
+        backlog.removeTask(taskSequence);
+
+        this.backlogRepository.save(backlog);
+
     }
 }

@@ -1,6 +1,7 @@
 package org.mami.tasktracker.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.mami.tasktracker.exceptions.CustomFieldValidationException;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -21,7 +22,9 @@ public class Backlog {
     @JsonIgnore
     private Project project;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "backlog")
+    @SuppressWarnings("JpaDataSourceORMInspection")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinColumn(name = "backlog_id")
     private List<Task> tasks = new ArrayList<>();
 
     public Backlog() {
@@ -64,11 +67,32 @@ public class Backlog {
     }
 
     public Task addTask(Task task) {
-        task.setBacklog(this);
         task.setProjectSequence(String.format("%s_%d", this.projectCode, this.PTSequence++));
         task.setProjectCode(this.projectCode);
 
         this.tasks.add(task);
         return task;
+    }
+
+    public Task updateTask(Task task) {
+        // find the task
+        Task toUpdate = this.tasks.stream()
+                .filter(t -> t.getProjectSequence().equals(task.getProjectSequence())).findFirst()
+                .orElseThrow( () -> new CustomFieldValidationException("taskSequence",
+                        String.format("Could not find a task with sequence {%s} in project {%s}",
+                                task.getProjectSequence(),
+                                this.getProjectCode())));
+
+        toUpdate.setSummary(task.getSummary());
+        toUpdate.setPriority(task.getPriority());
+        toUpdate.setDueDate(task.getDueDate());
+        toUpdate.setAcceptanceCriteria(task.getAcceptanceCriteria());
+        toUpdate.setStatus(task.getStatus());
+
+        return toUpdate;
+    }
+
+    public void removeTask(String taskSequence) {
+        this.tasks.removeIf(task -> task.getProjectSequence().equals(taskSequence));
     }
 }

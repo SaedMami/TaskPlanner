@@ -1,7 +1,5 @@
 package org.mami.tasktracker.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.Date;
@@ -34,10 +32,6 @@ public class Task {
 
     @Column(updatable = false)
     private String projectCode;
-
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH)
-    @JsonIgnore
-    private Backlog backlog;
 
     public Task() {
     }
@@ -136,14 +130,6 @@ public class Task {
 
     public void setProjectCode(String projectCode) {
         this.projectCode = projectCode;
-    }
-
-    public Backlog getBacklog() {
-        return backlog;
-    }
-
-    public void setBacklog(Backlog backlog) {
-        this.backlog = backlog;
     }
 
     @PrePersist
