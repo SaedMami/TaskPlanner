@@ -1,6 +1,5 @@
 package org.mami.tasktracker.web;
 
-import org.mami.tasktracker.domain.Backlog;
 import org.mami.tasktracker.domain.Task;
 import org.mami.tasktracker.services.BacklogService;
 import org.mami.tasktracker.services.ValidationReportingService;

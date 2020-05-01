@@ -70,6 +70,14 @@ public class Backlog {
         task.setProjectSequence(String.format("%s_%d", this.projectCode, this.PTSequence++));
         task.setProjectCode(this.projectCode);
 
+        if (task.getPriority() == 0) {
+            task.setPriority(3);
+        }
+
+        if (task.getStatus() == null || task.getStatus().isEmpty()) {
+            task.setStatus("TO_DO");
+        }
+
         this.tasks.add(task);
         return task;
     }

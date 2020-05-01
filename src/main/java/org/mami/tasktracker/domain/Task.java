@@ -1,5 +1,7 @@
 package org.mami.tasktracker.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.Date;
@@ -19,10 +21,11 @@ public class Task {
 
     private String acceptanceCriteria;
 
-    private String status = "TODO";
+    private String status;
 
-    private Integer priority = 3; // low priority by default
+    private Integer priority;
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date dueDate;
 
     @Column(updatable = false)
