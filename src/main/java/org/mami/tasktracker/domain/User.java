@@ -1,12 +1,17 @@
 package org.mami.tasktracker.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import java.util.Collection;
 import java.util.Date;
 
 @Entity
-public class User  {
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,6 +29,7 @@ public class User  {
     private String password;
 
     @Transient
+    @JsonIgnore
     private String confirmPassword;
 
     private Date createdAt;
@@ -68,6 +74,8 @@ public class User  {
         this.fullName = fullName;
     }
 
+
+
     public String getPassword() {
         return password;
     }
@@ -98,5 +106,36 @@ public class User  {
 
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isEnabled() {
+        return true;
+    }
+
+    @Override
+    @JsonIgnore
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        // nothing role based
+        return null;
     }
 }
