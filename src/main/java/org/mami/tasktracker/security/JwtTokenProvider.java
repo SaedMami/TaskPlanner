@@ -1,7 +1,6 @@
 package org.mami.tasktracker.security;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import org.mami.tasktracker.domain.User;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -38,7 +37,17 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    // Validate token
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parser().setSigningKey(SecurityConstants.SECRET).parseClaimsJws(token);
+            return true;
+        } catch (Exception ex) {
+            return false;
+        }
+    }
 
-    // Get the user id from the token
+    public Long getUserIdFromJwt(String token) {
+        Claims claims = Jwts.parser().setSigningKey(SecurityConstants.SECRET).parseClaimsJws(token).getBody();
+        return Long.parseLong((String) claims.get("id"));
+    }
 }
