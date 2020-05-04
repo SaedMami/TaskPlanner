@@ -10,6 +10,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/project")
@@ -26,30 +27,30 @@ public class ProjectController {
     }
 
     @PostMapping("")
-    public ResponseEntity<?> createNewProject(@RequestBody @Valid Project project, BindingResult result) {
+    public ResponseEntity<?> createNewProject(@RequestBody @Valid Project project, BindingResult result, Principal principal) {
         if (result.hasErrors()) {
             return validationReportingService.reportValidationErrors(result);
         }
 
-        Project createdProject = this.projectService.saveOrUpdate(project);
+        Project createdProject = this.projectService.saveOrUpdate(project, principal.getName());
         return new ResponseEntity<>(createdProject, HttpStatus.CREATED);
     }
 
     @GetMapping("/{projectCode}")
-    public ResponseEntity<?> getProjectByCode(@PathVariable String projectCode) {
-        Project foundProject = this.projectService.findProjectByCode(projectCode);
+    public ResponseEntity<?> getProjectByCode(@PathVariable String projectCode, Principal principal) {
+        Project foundProject = this.projectService.findProjectByCode(projectCode, principal.getName());
 
         return new ResponseEntity<>(foundProject, HttpStatus.OK);
     }
 
     @GetMapping("")
-    public Iterable<Project> getAllProjects() {
-        return this.projectService.findAllProjects();
+    public Iterable<Project> getAllProjects(Principal principal) {
+        return this.projectService.findAllProjects(principal.getName());
     }
 
     @DeleteMapping("/{projectCode}")
-    public ResponseEntity<?> deleteProjectByCode(@PathVariable String projectCode) {
-        this.projectService.deleteProjectByCode(projectCode);
+    public ResponseEntity<?> deleteProjectByCode(@PathVariable String projectCode, Principal principal) {
+        this.projectService.deleteProjectByCode(projectCode, principal.getName());
 
         return new ResponseEntity<>(String.format("Project with code: %s was deleted", projectCode), HttpStatus.OK);
     }

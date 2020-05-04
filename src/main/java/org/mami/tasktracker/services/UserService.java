@@ -6,12 +6,14 @@ import org.mami.tasktracker.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class UserService {
 
-    private UserRepository userRepository;
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final UserRepository userRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
     public UserService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
@@ -30,6 +32,10 @@ public class UserService {
 
         newUser.setPassword(this.bCryptPasswordEncoder.encode(newUser.getPassword()));
         return this.userRepository.save(newUser);
+    }
+
+    public void deleteUser(String id) {
+        this.userRepository.deleteById(Long.valueOf(id));
     }
 
 

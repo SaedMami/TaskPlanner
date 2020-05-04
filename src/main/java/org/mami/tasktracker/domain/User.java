@@ -8,8 +8,10 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 public class User implements UserDetails {
@@ -33,6 +35,10 @@ public class User implements UserDetails {
     private Date createdAt;
 
     private Date updatedAt;
+
+    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "user")
+    @JsonIgnore
+    private List<Project> projects = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {
@@ -71,7 +77,6 @@ public class User implements UserDetails {
     public void setFullName(String fullName) {
         this.fullName = fullName;
     }
-
 
 
     public String getPassword() {

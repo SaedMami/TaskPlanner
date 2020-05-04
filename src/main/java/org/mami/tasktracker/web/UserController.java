@@ -14,10 +14,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import org.mami.tasktracker.domain.User;
 
@@ -68,6 +65,12 @@ public class UserController {
        User newUser = userService.registerUser(user);
 
        return new ResponseEntity<>(newUser, HttpStatus.CREATED);
+   }
+
+   @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable String id) {
+        this.userService.deleteUser(id);
+        return new ResponseEntity<>("User was deleted", HttpStatus.OK);
    }
 
 
