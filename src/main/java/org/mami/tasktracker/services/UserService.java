@@ -24,7 +24,7 @@ public class UserService {
 
     public User registerUser(User newUser) {
         // username has to be unique
-        if (userRepository.findByUsername(newUser.getUsername()).isPresent()) {
+        if (userRepository.findByUsername(newUser.getUsername()) != null) {
             throw new CustomFieldValidationException(
                     "username",
                     "username already exists");

@@ -51,6 +51,10 @@ public class Project {
         this.user = user;
     }
 
+    public User getUser() {
+        return this.user;
+    }
+
     public Project() {
     }
 

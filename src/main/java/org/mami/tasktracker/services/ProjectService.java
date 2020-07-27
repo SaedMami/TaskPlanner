@@ -24,7 +24,7 @@ public class ProjectService {
 
     public Project saveOrUpdate(Project projectToSave, String username) {
             // find the user, this is guaranteed to exist since you cannot get here without a valid token
-            User user = this.userRepository.findByUsername(username).get();
+            User user = this.userRepository.findByUsername(username);
 
             if (projectToSave.getId() == null) {
                 // new project
@@ -41,7 +41,7 @@ public class ProjectService {
 
             } else {
                 // update the project
-                Project toBeUpdated = this.projectRepository.findByProjectCodeAndUser_Username(projectToSave.getProjectCode(), username).get();
+                Project toBeUpdated = this.findProjectByCode(projectToSave.getProjectCode(), username);
 
                 toBeUpdated.setName(projectToSave.getName());
                 toBeUpdated.setDescription(projectToSave.getDescription());
@@ -53,9 +53,15 @@ public class ProjectService {
     }
 
     public Project findProjectByCode(String projectCode, String username) {
-        return this.projectRepository.findByProjectCodeAndUser_Username(projectCode, username)
+
+        Project project = this.projectRepository.findByProjectCode(projectCode)
                 .orElseThrow(() -> new CustomFieldValidationException("projectCode",
-                        String.format("Could not find a Project with project code: <%s> for this user", projectCode)));
+                        String.format("Could not find a Project with project code: <%s>", projectCode)));
+
+        if (!project.getUser().getUsername().equals(username)) {
+            throw new CustomFieldValidationException("username", "user does not have permission to view project");
+        }
+        return  project;
     }
 
     public Iterable<Project> findAllProjects(String username) {

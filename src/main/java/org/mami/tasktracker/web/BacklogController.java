@@ -10,14 +10,15 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/backlog")
 @CrossOrigin
 public class BacklogController {
 
-    private BacklogService backlogService;
-    private ValidationReportingService validationReportingService;
+    private final BacklogService backlogService;
+    private final ValidationReportingService validationReportingService;
 
     @Autowired
     public BacklogController(BacklogService taskService, ValidationReportingService validationReportingService) {
@@ -26,12 +27,16 @@ public class BacklogController {
     }
 
     @PostMapping("/{projectCode}")
-    public ResponseEntity<?> addTaskToBacklog(@Valid @RequestBody Task task, BindingResult result, @PathVariable String projectCode) {
+    public ResponseEntity<?> addTaskToBacklog(
+            @Valid @RequestBody Task task,
+            BindingResult result,
+            @PathVariable String projectCode,
+            Principal principal) {
         if (result.hasErrors()) {
             return validationReportingService.reportValidationErrors(result);
         }
 
-        Task createdTask = this.backlogService.addTask(projectCode, task);
+        Task createdTask = this.backlogService.addTask(projectCode, task, principal.getName());
 
         return new ResponseEntity<>(createdTask, HttpStatus.CREATED);
     }
@@ -41,28 +46,35 @@ public class BacklogController {
             @Valid @RequestBody Task task,
             BindingResult result,
             @PathVariable String projectCode,
-            @PathVariable String taskSequence) {
+            @PathVariable String taskSequence,
+            Principal principal) {
 
         if (result.hasErrors()) {
             return validationReportingService.reportValidationErrors(result);
         }
 
-        return new ResponseEntity<>(this.backlogService.updateTask(projectCode, task), HttpStatus.OK);
+        return new ResponseEntity<>(this.backlogService.updateTask(projectCode, task, principal.getName()), HttpStatus.OK);
     }
 
     @GetMapping("/{projectCode}")
-    public ResponseEntity<?> getProjectBacklog(@PathVariable String projectCode) {
-        return new ResponseEntity<>(this.backlogService.getProjectBacklog(projectCode), HttpStatus.OK);
+    public ResponseEntity<?> getProjectBacklog(@PathVariable String projectCode, Principal principal) {
+        return new ResponseEntity<>(this.backlogService.getProjectBacklog(projectCode, principal.getName()), HttpStatus.OK);
     }
 
     @GetMapping("/{projectCode}/{taskSequence}")
-    public ResponseEntity<?> getProjectTask(@PathVariable String projectCode, @PathVariable String taskSequence) {
-        return new ResponseEntity<>(this.backlogService.getTaskBySequence(projectCode, taskSequence), HttpStatus.OK);
+    public ResponseEntity<?> getProjectTask(
+            @PathVariable String projectCode,
+            @PathVariable String taskSequence,
+            Principal principal) {
+        return new ResponseEntity<>(this.backlogService.getTaskBySequence(projectCode, taskSequence, principal.getName()), HttpStatus.OK);
     }
 
     @DeleteMapping("/{projectCode}/{taskSequence}")
-    public ResponseEntity<?> deleteProjectByCode(@PathVariable String projectCode, @PathVariable String taskSequence) {
-        this.backlogService.deleteTask(projectCode, taskSequence);
+    public ResponseEntity<?> deleteProjectByCode(
+            @PathVariable String projectCode,
+            @PathVariable String taskSequence,
+            Principal principal) {
+        this.backlogService.deleteTask(projectCode, taskSequence, principal.getName());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
